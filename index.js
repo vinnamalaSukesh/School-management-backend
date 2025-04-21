@@ -1,0 +1,38 @@
+const express = require('express')
+const cors = require('cors')
+require('dotenv').config()
+const mongoose = require('mongoose')
+const cookieParser = require('cookie-parser')
+const { Register } = require('./controllers/auth/register')
+const {Login} = require('./controllers/auth/login')
+const { VerifyJWT } = require('./controllers/auth/verify')
+const teacherRouter = require('./routes/teacher')
+const announcementsRouter = require('./routes/announcement')
+const studentRouter = require('./routes/student')
+const classRouter = require('./routes/class')
+const subjectRouter = require('./routes/subject')
+const marksRouter = require('./routes/markSeet')
+const attendanceRouter = require('./routes/attendance')
+
+const app = express()
+app.use(express.json())
+
+app.use(express.json())
+app.use(cors({ origin: process.env.FRONTEND_URL }))
+app.use(cookieParser())
+
+mongoose.connect(process.env.MONGO_URI).then(() => console.log('DB connected')).catch((err) => console.log(err))
+
+app.post('/register',Register)
+app.post('/login',Login)
+app.post('/admin-verify',VerifyJWT)
+
+app.use('/teacher',teacherRouter.teacherRouter)
+app.use('/student',studentRouter.studentRouter)
+app.use('/announcement/',announcementsRouter.announcementsRouter)
+app.use('/class',classRouter.classRouter)
+app.use('/subject',subjectRouter.subjectRouter)
+app.use('/marks',marksRouter.marksRouter)
+app.use('/attendance',attendanceRouter.attendanceRouter)
+
+app.listen(3000)
