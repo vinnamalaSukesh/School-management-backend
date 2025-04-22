@@ -35,4 +35,4 @@ app.use('/subject',subjectRouter.subjectRouter)
 app.use('/marks',marksRouter.marksRouter)
 app.use('/attendance',attendanceRouter.attendanceRouter)
 
-app.listen(3000)
+app.listen(3005)

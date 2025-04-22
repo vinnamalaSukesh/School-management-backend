@@ -17,15 +17,18 @@ const Create = async (req, res) => {
             };
         });
         const newSections = await Section.insertMany(formattedSections)
-        if(!newSections){
+        const plainSections = await Section.find({ _id: { $in: newSections.map(s => s._id) } }).lean()
+
+        if(!plainSections){
             return res.status(400)
         }
-        const sectionIds = newSections.map(section => section._id )
+        const sectionIds = plainSections.map(section => section._id )
         if(!newClass){
             return res.status(400).json()
         }
         const updatedClass = await Class.findByIdAndUpdate(newClass._id,{sections : sectionIds},{new : true})
-        const sectionsMap = toObjectById(newSections)
+        const sectionsMap = toObjectById(plainSections)
+        console.log(sectionsMap)
         return res.status(200).json({class : updatedClass,sections : sectionsMap})
     } catch (err) {
         return res.status(500).json({ err })
